@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+    provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  extensions = [uuidOssp(map: "uuid-ossp")]
+}
+
+enum CheckInType {
+  CHECK_IN
+  CHECK_OUT
+}
+
+enum Role {
+  WORKER
+  SUPERVISOR
+}
+
+model Site {
+  id       String   @id @default(uuid()) @db.Uuid
+  name     String   @unique
+  location String?
+  events   Event[]
+
+  @@unique([id, name])
+  @@map("sites")
+}
+
+model User {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @unique
+  email       String   @unique
+  password    String
+  role        Role
+
+  events    Event[]
+
+  @@unique([id, email, name])
+  @@map("users")
+}
+
+model Event {
+  id        String   @id @default(uuid()) @db.Uuid
+
+  workerId  String   @db.Uuid @map("worker_id") 
+  worker    User     @relation(fields: [workerId], references: [id])
+
+  siteId  String   @db.Uuid @map("site_id")
+  site    Site     @relation(fields: [siteId], references: [id])
+
+  timestamp DateTime @default(now())
+  type      CheckInType
+
+  @@unique([id])
+  @@map("events")
+}
+
+

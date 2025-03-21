@@ -1,0 +1,95 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input AuthInput {
+  email: String!
+  password: String!
+}
+
+type AuthResponse {
+  access_token: String!
+  user: UserGql!
+}
+
+input CheckEventInput {
+  siteId: String!
+  userName: String!
+}
+
+enum CheckInType {
+  CHECK_IN
+  CHECK_OUT
+}
+
+input CreateSiteInput {
+  name: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type EventGql {
+  id: ID!
+  site: SiteGql!
+  siteId: String!
+  timestamp: DateTime!
+  type: CheckInType!
+  worker: UserGql!
+  workerId: String!
+}
+
+input FilterEventsInput {
+  date: String
+  siteId: String
+  workerId: String
+}
+
+type Mutation {
+  checkIn(checkEventInput: CheckEventInput!): EventGql!
+  checkOut(checkEventInput: CheckEventInput!): EventGql!
+  createSite(createSiteInput: CreateSiteInput!): SiteGql!
+  login(authInput: AuthInput!): AuthResponse!
+  signUp(signUpInput: SignUpInput!): UserGql!
+}
+
+type Query {
+  eventsBySiteId(siteId: String!): [EventGql!]!
+  eventsByWorkerId(workerId: String!): [EventGql!]!
+  listCheckInUsers: [UserGql!]!
+  listEvents(filters: FilterEventsInput!): [EventGql!]!
+  sites: [SiteGql!]!
+  user(userId: String!): UserGql!
+  workers: [UserGql!]!
+}
+
+enum Role {
+  SUPERVISOR
+  WORKER
+}
+
+input SignUpInput {
+  email: String!
+  name: String!
+  password: String!
+  role: String!
+}
+
+type SiteGql {
+  events: [EventGql!]!
+  id: ID!
+  location: String
+  name: String!
+  workers: [UserGql!]!
+}
+
+type UserGql {
+  email: String!
+  events: [EventGql!]!
+  id: ID!
+  name: String!
+  password: String
+  role: Role!
+}
