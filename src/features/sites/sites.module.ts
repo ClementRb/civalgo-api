@@ -7,18 +7,23 @@ import { SiteGqlMapper } from './presentation/graphql/object-mappers/site.gql.ma
 import { SitesResolver } from './presentation/graphql/resolvers/sites.resolver';
 import { CreateSiteUseCase } from './application/usecases/create-site.usecase';
 import { ListSitesUseCase } from './application/usecases/list-sites.usecase';
+import { EventsResolver } from './presentation/graphql/resolvers/events.resolver';
 
 @Module({
   imports: [PrismaModule],
   providers: [
     SitesResolver,
+    EventsResolver,
+
     CreateSiteUseCase,
-    SitesRepository,
     RetrieveSiteByIdUseCase,
     ListSitesUseCase,
-    PrismaService,
+
     SiteGqlMapper,
+
+    PrismaService,
+    SitesRepository,
   ],
-  exports: [SitesRepository],
+  exports: [RetrieveSiteByIdUseCase],
 })
 export class SitesModule {}
